@@ -3,14 +3,13 @@ package Config
 import (
 	"fmt"
 	"os"
+	"log"
 
 	"github.com/jinzhu/gorm"
 	"github.com/joho/godotenv"
 )
 
 var DB *gorm.DB
-
-var err error = godotenv.Load(".env")
 
 type DBConfig struct{
 	Host     string
@@ -21,6 +20,13 @@ type DBConfig struct{
 }
 
 func BuildDBConfig() *DBConfig{
+
+	err := godotenv.Load(".env")
+
+	if err != nil {
+		log.Fatalf("env file didn't load properly")
+	}
+
 	dbConfig := DBConfig{
 		Host:     os.Getenv("MYSQL_HOST"),
 		Port:     os.Getenv("MYSQL_PORT"),
