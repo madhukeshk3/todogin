@@ -2,15 +2,19 @@ package Config
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/jinzhu/gorm"
+	"github.com/joho/godotenv"
 )
 
 var DB *gorm.DB
 
+var err error = godotenv.Load(".env")
+
 type DBConfig struct{
 	Host     string
-	Port     int
+	Port     string
 	User     string
 	DBName   string
 	Password string
@@ -18,18 +22,18 @@ type DBConfig struct{
 
 func BuildDBConfig() *DBConfig{
 	dbConfig := DBConfig{
-		Host:     "0.0.0.0",
-		Port:     3306,
-		User:     "root",
-		DBName:   "todos",
-		Password: "password",
+		Host:     os.Getenv("MYSQL_HOST"),
+		Port:     os.Getenv("MYSQL_PORT"),
+		User:     os.Getenv("MYSQL_USER"),
+		DBName:   os.Getenv("MYSQL_DBNAME"),
+		Password: os.Getenv("MYSQL_PASSWORD"),
 	}
 	return &dbConfig
 }
 
 func DbURL(dbConfig *DBConfig) string {
 	return fmt.Sprintf(
-		"%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local",
+		"%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
 		dbConfig.User,
 		dbConfig.Password,
 		dbConfig.Host,
